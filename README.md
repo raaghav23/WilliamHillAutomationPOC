@@ -10,3 +10,6 @@ Build : Maven
 Technology : Java
 
 Reporting : TestNG
+
+Objective : 
+Verify the HomePage objects and Bet Slip.

@@ -25,6 +25,7 @@ public class BasePage {
 
 	public static final String SITE_URL = BASE_URL;
 	public final String stakeAmount = "10.50";
+	public final String stakeAmountTotal = "$10.50";
 
 	// Homepage- Top navigation buttons page objects
 	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[1]/div[2]/div/nav[2]/div/ul[1]/li[1]/a")
@@ -59,19 +60,16 @@ public class BasePage {
 	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[2]/a")
 	public WebElement jockeyChallenges;
 
-	/*
-	 * @FindBy(xpath =
-	 * "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[3]/a") public
-	 * WebElement premiumPrice;
-	 */
+	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[3]/a")
+	public WebElement premiumPrice;
 
 	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[3]/a")
 	public WebElement quickmultis;
 
-	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[4]/a")
+	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[3]/a")
 	public WebElement promotions;
 
-	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[5]/a")
+	@FindBy(xpath = "html/body/div[2]/div[1]/div/div[2]/div/div[2]/nav/ul/li[4]/a")
 	public WebElement results;
 
 	/**** Right Toolbar Menu items ****/
@@ -121,8 +119,13 @@ public class BasePage {
 	@FindBy(xpath = "/html/body/div[2]/div[3]/div/div/div[2]/div/form/div/div/div/div[2]/b")
 	public WebElement unitStakeValue;
 
+	@FindBy(xpath = "/html/body/div[2]/div[3]/div/div/div[2]/div/form/footer/ul/li[2]/b")
+	public WebElement totalStakeValue;
+
 	/***
-	 * @author Raaghav A S
+	 * @author Raaghav A S Method to Verify the Home Page UI - Top Menu Item -
+	 *         Left ToolBar Items - Right ToolBar Items
+	 * 
 	 * @return
 	 */
 	protected BasePage verifyHomePageUI() {
@@ -132,10 +135,18 @@ public class BasePage {
 		return this;
 	}
 
-	protected BasePage verifyBetSlip() {
-		verifyAddtoBetSlip(); // Add to Bet Slip
-		verifyBetSlipUI(); // Best Slip functionality
-		// verifyPossiblePayoutLogic(); // Verify PossiblePayoutLogic
+	/**
+	 * Method to Verify the Bet Slip Functionality - Add A Stake Amount - Total
+	 * Stake Value Amount - Verify the Possible Payout - veirfy the Bet Slip UI
+	 * 
+	 * @return
+	 */
+	protected BasePage verifyBetSlipFunctionality() {
+		addAStakeAmount(); // Add a Stake Amount
+		verifyTotalStakeValueAmount(); // Verify the stake amount entered and
+										// total stake amount is the same
+		verifyPossiblePayoutLogic(); // Verify PossiblePayoutLogic
+		verifybetSlipUI(); // Bet Slip UI
 		return this;
 	}
 
@@ -158,18 +169,37 @@ public class BasePage {
 	}
 
 	/**
-	 * Verify Left Tool Bar Items - In-Play - Jockey Challenges - Quick Multis -
-	 * Promotions - Results
+	 * Verify Left Tool Bar Items - - In-Play - Jockey - Challenges - Quick
+	 * Multis - - Promotions - Results
 	 * 
 	 * @return
 	 */
 	protected BasePage verifyLeftToolBarItems() {
-		assertThat(inPlay.getText(), is("In-Play"));
-		assertThat(jockeyChallenges.getText(), is("Jockey Challenges"));
-		// assertThat(premiumPrice.getText(), is("Premium Price"));
-		assertThat(quickmultis.getText(), is("Quick Multis"));
-		assertThat(promotions.getText(), is("Promotions"));
-		assertThat(results.getText(), is("Results"));
+
+		if (inPlay.isDisplayed()) {
+			assertThat(inPlay.getText(), is("In-Play"));
+		}
+
+		if (jockeyChallenges.isDisplayed()) {
+			assertThat(jockeyChallenges.getText(), is("Jockey Challenges"));
+		}
+
+		/*if (premiumPrice.isDisplayed()) {
+			assertThat(premiumPrice.getText(), is("Premium Price"));
+		}
+
+		if (quickmultis.isDisplayed()) {
+			assertThat(quickmultis.getText(), is("Quick Multis"));
+		}
+
+		if (promotions.isDisplayed()) {
+			assertThat(promotions.getText(), is("Promotions"));
+		}
+
+		if (results.isDisplayed()) {
+			assertThat(results.getText(), is("Results"));
+		}
+		*/
 		return this;
 	}
 
@@ -190,13 +220,12 @@ public class BasePage {
 	 * 
 	 * @return
 	 */
-	protected BasePage verifyAddtoBetSlip() {
+	protected BasePage addHorseRacetoBetSlip() {
 		assertThat(filterteTypeHorseRacing.isDisplayed(), is(true));
 
 		if (placeRaceBet.isDisplayed()) {
-			placeRaceBet.click(); // Place Race Bet
+			placeRaceBet.click(); // Place Race Bet, add a horse to bet Slip
 		}
-
 		return this;
 	}
 
@@ -206,19 +235,44 @@ public class BasePage {
 	 * 
 	 * @return
 	 */
-	protected BasePage verifyBetSlipUI() {
-
-		if (betSlip.isDisplayed()) {
-			betSlip.click();
-			assertThat(betSlip.getText(), is("Bet Slip"));
-			placeHolderStake.click();
-			placeHolderStake.sendKeys(stakeAmount);
-			assertThat(totaBets.isDisplayed(), is(true));
-			assertThat(possiblePayout.isDisplayed(), is(true));
-			assertThat(clearBtn.isDisplayed(), is(true));
-			assertThat(betSlipNote.isDisplayed(), is(true));
-			assertThat(betInPlayStoreNote.isDisplayed(), is(true));
+	protected BasePage addAStakeAmount() {
+		if (betSlip.isDisplayed()) { // verify the bet Slip UI is shown
+			betSlip.click(); // Navigate the Bet Slip
+			assertThat(betSlip.getText(), is("Bet Slip")); // Assert the Bet
+															// Slip
+			placeHolderStake.click(); // Select the Placeholder
+			placeHolderStake.sendKeys(stakeAmount); // Enter the Stake Amount
 		}
+		return this;
+	}
+
+	/**
+	 * Verify the Added Stake Value and Total Stake value is similar
+	 * 
+	 * @return
+	 */
+	protected BasePage verifyTotalStakeValueAmount() {
+		assertThat(stakeAmount, is(totalStakeValue.getText())); // verify the
+																// stake value
+																// entered and
+																// total stake
+																// value are the
+																// Equal.
+		return this;
+	}
+
+	/**
+	 * Verify the Bet Slip UserInterface
+	 * 
+	 * @return
+	 */
+
+	protected BasePage verifybetSlipUI() {
+		assertThat(totaBets.isDisplayed(), is(true));
+		assertThat(possiblePayout.isDisplayed(), is(true));
+		assertThat(clearBtn.isDisplayed(), is(true));
+		assertThat(betSlipNote.isDisplayed(), is(true));
+		assertThat(betInPlayStoreNote.isDisplayed(), is(true));
 		return this;
 	}
 

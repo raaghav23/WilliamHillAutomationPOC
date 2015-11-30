@@ -16,14 +16,15 @@ public class HomePage extends BasePage {
 	}
 
 	/**
-	 * Verifies the Home Page User Interface and Bet Slip UI *
+	 * Verifies the Home Page User Interface and Bet Slip UI 
 	 * 
 	 * @return
 	 */
 
 	public HomePage verifyHomePage() {
-		verifyHomePageUI(); // verify hoemepage elements
-		verifyBetSlip(); // Verify Bet Slip
+		verifyHomePageUI(); 			// verify hoemepage elements
+		addHorseRacetoBetSlip(); 		// Add Horse Racing Bet to the BetSlip
+		verifyBetSlipFunctionality(); 	// Verify Bet Slip
 		return this;
 	}
 
